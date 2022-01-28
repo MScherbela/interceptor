@@ -1,12 +1,12 @@
 <template>
   <div id="app" data="data">
-    <b-container>
+    <b-container fluid>
       <b-row>
-        <b-col cols="8">
-
+        <b-col cols="9">
+          <ShipMap/>
         </b-col>
         <b-col>
-        <ShipList/>
+          <ShipList/>
         </b-col>
       </b-row>
     </b-container>
@@ -15,13 +15,15 @@
 
 <script>
 import ShipList from './components/ShipLIst.vue'
+import ShipMap from "../ShipMap";
 
 export default {
   name: 'App',
   components: {
-    ShipList
-    // HelloWorld
+    ShipList,
+    ShipMap
   },
+
 }
 </script>
 

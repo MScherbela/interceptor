@@ -1,14 +1,10 @@
 <template>
   <div class="ship">
-    <div class="card" :class="!ship.alive ? 'sunk' : ''">
-      <b-card-header class="pt-2 pb-2">
+    <div class="card" :class="{sunk: !ship.alive, warship: ship.is_warship()}">
+      <b-card-header class="pt-2 pb-2" >
         <b-row>
           <b-col>
             <b-card-title class="mb-0">{{ ship.name }}</b-card-title>
-          </b-col>
-          <b-col class="col-md-auto">
-                            <b-button class="btn-secondary btn-sm" v-on:click="$store.commit('sink_ship', ship.id)">Sink</b-button>
-
           </b-col>
           <b-col class="col-md-auto">
             <b-button-close v-on:click="$store.commit('remove_ship', id)"/>
@@ -22,7 +18,8 @@
             {{ ship.tons }} BRT
           </b-col>
           <b-col>
-            {{ ship.pos.x }} / {{ ship.pos.y }} <br>
+            {{ ship.pos.x.toFixed(2) }} / {{ ship.pos.y.toFixed(2) }} <br>
+            {{ rel_direction.toFixed(0) }} deg / {{ distance.toFixed(2) }} sm <br>
             {{ ship.pos.heading }} deg, {{ ship.pos.speed }} kn
           </b-col>
         </b-row>
@@ -39,6 +36,14 @@ export default {
     id: Number,
     ship: Object
   },
+  computed: {
+    distance() {
+      return this.$store.state.uboot_pos.get_relative_position(this.ship.pos).distance
+    },
+    rel_direction() {
+      return this.$store.state.uboot_pos.get_relative_position(this.ship.pos).rel_direction
+    },
+  }
 }
 </script>
 
@@ -50,6 +55,14 @@ export default {
 
 .sunk {
   opacity: 0.4;
+}
+
+.warship .card-body{
+  background-color: #d6969c;
+}
+
+.warship .card-header{
+  background-color: #b34752
 }
 
 </style>

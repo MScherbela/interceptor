@@ -19,15 +19,49 @@ class Position{
     }
 
     get_direction_vector(){
-        const angle = this.heading * 2 * Math.PI
+        const angle = this.heading * Math.PI / 180
         return [Math.sin(angle), Math.cos(angle)]
     }
 
     move(seconds = 1){
         const e = this.get_direction_vector()
-        this.x += e[0] * this.speed * seconds
-        this.y += e[1] * this.speed * seconds
+        this.x += e[0] * this.speed * seconds / 3600
+        this.y += e[1] * this.speed * seconds / 3600
     }
+
+    create_position(rel_direction, distance, heading, speed){
+        const angle = (this.heading + rel_direction) * Math.PI / 180
+        return new Position(
+            this.x + distance * Math.sin(angle),
+            this.y + distance * Math.cos(angle),
+            heading,
+            speed)
+    }
+
+    get_relative_position(pos){
+        const dx = pos.x - this.x
+        const dy = pos.y - this.y
+        const distance = Math.sqrt(dx*dx + dy*dy)
+        const angle = 90 - Math.atan2(dy, dx) * 180 / Math.PI
+        const rel_direction = (this.heading - angle) % 360
+        return {distance, rel_direction}
+    }
+
+    to_svg_path(size=0.4){
+        const efwd_x = Math.sin(this.heading*Math.PI / 180)
+        const efwd_y = Math.cos(this.heading*Math.PI / 180)
+        const enrm_x = efwd_y
+        const enrm_y = -efwd_x
+
+        const tip_x = this.x + efwd_x * size * 2.5
+        const tip_y = this.y + efwd_y * size * 2.5
+        const base1_x = this.x + enrm_x * size - efwd_x * size * 1.5
+        const base1_y = this.y + enrm_y * size - efwd_y * size * 1.5
+        const base2_x = this.x - enrm_x * size - efwd_x * size * 1.5
+        const base2_y = this.y - enrm_y * size - efwd_y * size * 1.5
+        return "M " + tip_x + " " + tip_y + " L " + base1_x + " " + base1_y + " L " + base2_x + " " + base2_y + " Z"
+    }
+
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -43,6 +77,10 @@ class Ship{
         this.tons = tons
         this.pos = pos
     }
+
+    is_warship(){
+        return (this.ship_type != "Unbekannt") && (this.ship_type != 'Handelsschiff')
+    }
 }
 
 function increment_ship_id(state){
@@ -51,11 +89,19 @@ function increment_ship_id(state){
 }
 
 function add_ship(state, ship_data) {
-    let ship = new Ship(increment_ship_id(state))
-    ship.name = ship_data.name
-    ship.tons = ship_data.tons
-    ship.ship_type = ship_data.ship_type
-    ship.pos.speed = ship_data.speed
+
+    const pos = state.uboot_pos.create_position(
+        ship_data.rel_direction,
+        ship_data.distance,
+        ship_data.heading,
+        ship_data.speed)
+    const ship = new Ship(
+        increment_ship_id(state),
+        ship_data.ship_type,
+        ship_data.name,
+        ship_data.tons,
+        pos
+        )
     state.ships.push(ship)
 }
 
@@ -74,6 +120,7 @@ const store = new Vuex.Store({
     state: {
         ship_id_counter: 0,
         time: 0,
+        uboot_pos: new Position(0,0,0,0),
         ships: []
     },
     mutations: {
