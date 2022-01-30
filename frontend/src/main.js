@@ -3,33 +3,33 @@ import Vuex from 'vuex'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import App from './App.vue'
-import BootstrapVue from "bootstrap-vue";
+import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
+Vue.use(BootstrapVueIcons)
 Vue.use(Vuex)
 
-class Position{
-    constructor(x,y,heading, speed)
-    {
+class Position {
+    constructor(x, y, heading, speed) {
         this.x = x
         this.y = y
         this.heading = heading
         this.speed = speed
     }
 
-    get_direction_vector(){
+    get_direction_vector() {
         const angle = this.heading * Math.PI / 180
         return [Math.sin(angle), Math.cos(angle)]
     }
 
-    move(seconds = 1){
+    move(seconds = 1) {
         const e = this.get_direction_vector()
         this.x += e[0] * this.speed * seconds / 3600
         this.y += e[1] * this.speed * seconds / 3600
     }
 
-    create_position(rel_direction, distance, heading, speed){
+    create_position(rel_direction, distance, heading, speed) {
         const angle = (this.heading + rel_direction) * Math.PI / 180
         return new Position(
             this.x + distance * Math.sin(angle),
@@ -38,18 +38,18 @@ class Position{
             speed)
     }
 
-    get_relative_position(pos){
+    get_relative_position(pos) {
         const dx = pos.x - this.x
         const dy = pos.y - this.y
-        const distance = Math.sqrt(dx*dx + dy*dy)
+        const distance = Math.sqrt(dx * dx + dy * dy)
         const angle = 90 - Math.atan2(dy, dx) * 180 / Math.PI
-        const rel_direction = (this.heading - angle) % 360
+        const rel_direction = (this.heading + angle + 360) % 360
         return {distance, rel_direction}
     }
 
-    to_svg_path(size=0.4){
-        const efwd_x = Math.sin(this.heading*Math.PI / 180)
-        const efwd_y = Math.cos(this.heading*Math.PI / 180)
+    to_svg_path(size = 0.4) {
+        const efwd_x = Math.sin(this.heading * Math.PI / 180)
+        const efwd_y = Math.cos(this.heading * Math.PI / 180)
         const enrm_x = efwd_y
         const enrm_y = -efwd_x
 
@@ -65,9 +65,9 @@ class Position{
 }
 
 // eslint-disable-next-line no-unused-vars
-class Ship{
-    constructor(id=0, ship_type = "Unbekannt", name = "Kontakt", tons = 0, pos=null, alive=true) {
-        if (pos == null){
+class Ship {
+    constructor(id = 0, ship_type = "Unbekannt", name = "Kontakt", tons = 0, pos = null, alive = true) {
+        if (pos == null) {
             pos = new Position(0, 0, 0, 0)
         }
         this.id = id
@@ -78,12 +78,12 @@ class Ship{
         this.pos = pos
     }
 
-    is_warship(){
+    is_warship() {
         return (this.ship_type != "Unbekannt") && (this.ship_type != 'Handelsschiff')
     }
 }
 
-function increment_ship_id(state){
+function increment_ship_id(state) {
     state.ship_id_counter++
     return state.ship_id_counter
 }
@@ -101,40 +101,69 @@ function add_ship(state, ship_data) {
         ship_data.name,
         ship_data.tons,
         pos
-        )
+    )
     state.ships.push(ship)
 }
-
-function sink_ship(state, id) {
-    state.ships.find(s => s.id == id).alive = false
-}
-
-function remove_ship(state, id) {
-    console.log("Removing ship: " + id)
-    state.ships = state.ships.filter(s => s.id != id)
-    console.log(state.ships.length)
-}
-
 
 const store = new Vuex.Store({
     state: {
         ship_id_counter: 0,
         time: 0,
-        uboot_pos: new Position(0,0,0,0),
+        play_speed: 1,
+        uboot_pos: new Position(0, 0, 0, 0),
         ships: []
     },
     mutations: {
         add_ship: add_ship,
-        sink_ship: sink_ship,
-        remove_ship: remove_ship,
-        pass_time: function(state, seconds=1){
+        sink_ship(state, id) {
+            state.ships.find(s => s.id == id).alive = false
+        },
+        remove_ship(state, id) {
+            state.ships = state.ships.filter(s => s.id != id)
+            console.log(state.ships.length)
+        },
+        set_play_speed(state, speed){
+            state.play_speed = speed
+        },
+        pass_time: function (state, seconds = 1) {
             state.time += seconds
+            while(state.time < 0){
+                state.time += 86400
+            }
+            while(state.time > 86400){
+                state.time -= 86400
+            }
             state.ships.map((s) => s.pos.move(seconds))
+            state.uboot_pos.move(seconds)
+        },
+        update_uboot_heading(state, heading) {
+            state.uboot_pos.heading = heading
+        },
+        update_uboot_speed(state, speed) {
+            state.uboot_pos.speed = speed
+        },
+        update_ship_speed(state, {id, speed}){
+            state.ships.filter((ship) => ship.id == id).map((ship) => ship.pos.speed = speed)
+        },
+        update_ship_heading(state, {id, heading}){
+            state.ships.filter((ship) => ship.id == id).map((ship) => ship.pos.heading = heading)
+        },
+        update_ship_distance(state, {id, dist}) {
+            state.ships.filter((ship) => ship.id == id).map((ship) => {
+                const rel_dir = state.uboot_pos.get_relative_position(ship.pos).rel_direction
+                ship.pos = state.uboot_pos.create_position(rel_dir, dist, ship.pos.heading, ship.pos.speed)
+            })
+        },
+        update_ship_rel_direction(state, {id, rel_direction}) {
+            state.ships.filter((ship) => ship.id == id).map((ship) => {
+                const distance = state.uboot_pos.get_relative_position(ship.pos).distance
+                ship.pos = state.uboot_pos.create_position(rel_direction, distance, ship.pos.heading, ship.pos.speed)
+            })
         }
     }
 })
 
-setInterval(() => store.commit('pass_time'), 1000)
+setInterval(() => store.commit('pass_time', store.state.play_speed), 1000)
 
 new Vue({
     render: h => h(App),

@@ -4,7 +4,7 @@
       <b-form-row>
         <b-col>
           <b-form-group label="Ship name" label-for="ship_name">
-            <b-form-input v-model="name" id="ship_name" type="text"/>
+            <b-form-input v-model="name" id="ship_name" type="text" required/>
           </b-form-group>
         </b-col>
         <b-col>
@@ -59,14 +59,14 @@ export default {
     ship_type_options: {
       type: Array,
       default: function () {
-        return ["Zerstörer", "Handelsschiff"]
+        return ["Unbekannt", "Zerstörer", "Handelsschiff"]
       }
     }
   },
   data() {
     return {
-      name: "My Ship",
-      ship_type: "Handelsschiff",
+      name: "",
+      ship_type: "Unbekannt",
       tons: 1000,
       speed: 7.0,
       distance: 5.0,

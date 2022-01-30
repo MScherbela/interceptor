@@ -2,8 +2,12 @@
   <div id="app" data="data">
     <b-container fluid>
       <b-row>
-        <b-col cols="9">
-          <ShipMap/>
+        <b-col cols="7">
+          <ShipMap :ships="$store.state.ships" :uboot_pos="$store.state.uboot_pos"/>
+        </b-col>
+        <b-col cols="2">
+          <UBootInput/>
+          <TimeControl/>
         </b-col>
         <b-col>
           <ShipList/>
@@ -15,13 +19,17 @@
 
 <script>
 import ShipList from './components/ShipLIst.vue'
-import ShipMap from "../ShipMap";
+import ShipMap from "./components/ShipMap";
+import UBootInput from "@/components/UBootInput";
+import TimeControl from "@/components/TimeControl";
 
 export default {
   name: 'App',
   components: {
+    TimeControl,
     ShipList,
-    ShipMap
+    ShipMap,
+    UBootInput
   },
 
 }

@@ -4,6 +4,7 @@
       <ShipCard
           :ship="ship"
           :id="ship.id"
+          class="mb-1 mt-1"
       />
     </div>
     <b-card>
