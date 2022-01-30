@@ -2,14 +2,18 @@
   <div id="app" data="data">
     <b-container fluid>
       <b-row>
-        <b-col cols="7">
-          <ShipMap :ships="$store.state.ships" :uboot_pos="$store.state.uboot_pos"/>
+        <b-col>
+          <ShipMap :ships="$store.state.ships" :uboot_pos="$store.state.uboot_pos" :intercept="$store.state.intercept"/>
         </b-col>
-        <b-col cols="2">
+        <b-col cols="3">
           <UBootInput/>
           <TimeControl/>
+          <InterceptControl
+              :ships="$store.state.ships"
+              :uboot_pos="$store.state.uboot_pos"
+              :time="this.$store.state.time"/>
         </b-col>
-        <b-col>
+        <b-col cols="3">
           <ShipList/>
         </b-col>
       </b-row>
@@ -22,6 +26,7 @@ import ShipList from './components/ShipLIst.vue'
 import ShipMap from "./components/ShipMap";
 import UBootInput from "@/components/UBootInput";
 import TimeControl from "@/components/TimeControl";
+import InterceptControl from "@/components/InterceptControl";
 
 export default {
   name: 'App',
@@ -29,7 +34,8 @@ export default {
     TimeControl,
     ShipList,
     ShipMap,
-    UBootInput
+    UBootInput,
+    InterceptControl
   },
 
 }

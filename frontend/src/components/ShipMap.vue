@@ -15,10 +15,11 @@ export default {
   },
   props: {
     ships: Array,
-    uboot_pos: Object
+    uboot_pos: Object,
+    intercept: Object
   },
-  computed: {
-    plot_data() {
+  methods: {
+    get_ship_traces() {
       return this.ships.map((s) => {
         const rel_pos = this.uboot_pos.get_relative_position(s.pos)
         return {
@@ -30,6 +31,26 @@ export default {
         }
       })
     },
+    get_intercept_trace() {
+      const route = this.intercept.route
+      return {
+        x: route.map(wp => wp.x),
+        y: route.map(wp => wp.y),
+        type: 'scatter',
+        name: 'Intercept',
+        color: 'red',
+        showlegend: true
+      }
+    },
+  },
+  computed: {
+    plot_data() {
+      let traces = this.get_ship_traces()
+      if (this.intercept != null) {
+        traces.push(this.get_intercept_trace())
+      }
+      return traces
+    },
     plot_layout() {
       return {
         height: 700,
@@ -40,18 +61,18 @@ export default {
           r: 20
         },
         yaxis: {
-          range: [-10, 10],
+          range: [-20, 20],
           scaleanchor: 'x',
           scaleratio: 1,
           dtick: 1,
           zeroline: false
         },
         xaxis: {
-          range: [-10, 10],
+          range: [-20, 20],
           dtick: 1,
           zeroline: false
         },
-        legend:{
+        legend: {
           x: 0.02,
           y: 0.02
         },

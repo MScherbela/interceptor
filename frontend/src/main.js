@@ -111,7 +111,8 @@ const store = new Vuex.Store({
         time: 0,
         play_speed: 1,
         uboot_pos: new Position(0, 0, 0, 0),
-        ships: []
+        ships: [],
+        intercept: null
     },
     mutations: {
         add_ship: add_ship,
@@ -120,7 +121,6 @@ const store = new Vuex.Store({
         },
         remove_ship(state, id) {
             state.ships = state.ships.filter(s => s.id != id)
-            console.log(state.ships.length)
         },
         set_play_speed(state, speed){
             state.play_speed = speed
@@ -159,6 +159,9 @@ const store = new Vuex.Store({
                 const distance = state.uboot_pos.get_relative_position(ship.pos).distance
                 ship.pos = state.uboot_pos.create_position(rel_direction, distance, ship.pos.heading, ship.pos.speed)
             })
+        },
+        set_intercept(state, intercept){
+            state.intercept = intercept
         }
     }
 })

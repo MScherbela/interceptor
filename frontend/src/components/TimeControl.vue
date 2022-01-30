@@ -25,7 +25,6 @@ export default {
         const h = Math.floor(time / 3600)
         const m = Math.floor(((time - 3600 * h) / 60))
         const s = Math.floor((time - 3600 * h - 60 * m))
-        console.log(h + ":" + m + ":" + s)
         return h + ":" + m + ":" + s
       },
       set(t) {
@@ -46,12 +45,6 @@ export default {
       }
     }
   },
-  methods: {
-    set_play_speed(value) {
-      console.log(value)
-      this.$store.commit('set_play_speed', parseFloat(value) || 0)
-    }
-  }
 }
 </script>
 

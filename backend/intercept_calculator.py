@@ -8,23 +8,23 @@ from jax.experimental.optimizers import adam
 def get_duration(duration_param):
     return jnp.exp(duration_param)
 
-def move(state, params):
+def move(params, state, speed):
     angle = params[0]
     duration = get_duration(params[1])
-    speed = 1.0
     x, y, old_angle, time = state
     dx = jnp.cos(angle) * speed * duration
     dy = jnp.sin(angle) * speed * duration
     return jnp.array([x + dx, y + dy, angle, time + duration])
 
 
-def calc_route(initial_state, params):
+def calc_route(params, initial_state, speed):
     waypoints = [initial_state]
     state = initial_state
     for p in params:
-        state = move(state, p)
+        state = move(p, state, speed)
         waypoints.append(state)
     return jnp.stack(waypoints)
+
 
 def loss_distance(distance):
     min_distance = 0.2
@@ -59,13 +59,13 @@ def loss_func(route, target_pos, target_angle, target_speed):
     return loss_dist + loss_bearing + loss_angle + 0.05*loss_total_duration + loss_final_run_duration + loss_durations
 
 
-calc_route_batch = jax.vmap(calc_route, in_axes=[None, 0], out_axes=0)
+calc_route_batch = jax.vmap(calc_route, in_axes=[0, None, None], out_axes=0)
 loss_batch = jax.vmap(loss_func, in_axes=[0,None,None,None], out_axes=0)
 
 
-def build_value_and_grad(initial_state, target_pos, target_angle, target_speed):
+def build_value_and_grad(initial_state, speed, target_pos, target_angle, target_speed):
     def loss_from_param(param):
-        route = calc_route(initial_state, param)
+        route = calc_route(param, initial_state, speed)
         return loss_func(route, target_pos, target_angle, target_speed)
     return jax.vmap(jax.value_and_grad(loss_from_param))
 
@@ -86,14 +86,21 @@ def plot_routes(routes, losses, initial_target_pos, target_angle, target_speed, 
     axis.grid(alpha=0.5)
     axis.set_aspect('equal', adjustable='box')
 
-def calculate_intercept(initial_pos, initial_angle, initial_speed, target_pos, target_angle, target_speed, initial_time = 0, n_segments=3, n_runs=10, lr=1e-2, n_steps=1000)
+def waypoint_to_dict(waypoint):
+    keys = ['x', 'y', 'angle', 't']
+    return {k: float(v) for k,v in zip(keys, waypoint)}
+
+def calculate_intercept(initial_pos, initial_angle, initial_speed, target_pos, target_angle, target_speed, initial_time=0, n_segments=3,
+                        n_runs=10, lr=1e-2, n_steps=5000):
+    initial_pos = np.array(initial_pos)
+    target_pos = np.array(target_pos)
     initial_state = jnp.array([initial_pos[0], initial_pos[1], initial_angle, initial_time])
-    target_params = (target_pos, target_angle, target_speed)
+    target_params = (np.array(target_pos), target_angle, target_speed)
 
     initial_params = np.stack([np.random.uniform(0, 2*np.pi, [n_runs, n_segments]),
                              np.random.uniform(-1, 1, [n_runs, n_segments])], axis=-1)
     opt_init, opt_update, opt_get_params = adam(lr)
-    val_grad_func = build_value_and_grad(initial_state, *target_params)
+    val_grad_func = build_value_and_grad(initial_state, initial_speed, *target_params)
 
     @jax.jit
     def opt_step(step_nr, _opt_state):
@@ -106,12 +113,20 @@ def calculate_intercept(initial_pos, initial_angle, initial_speed, target_pos, t
     for n in range(n_steps):
         opt_state, _ = opt_step(n, opt_state)
     params = opt_get_params(opt_state)
-    routes = calc_route_batch(initial_state, params)
+    routes = calc_route_batch(params, initial_state, initial_speed)
     losses = loss_batch(routes, *target_params)
-    ind_routes = np.argsort(losses)
-    params = params[ind_routes]
-    routes = routes[ind_routes]
-    losses = losses[ind_routes]
+    print(losses)
+    ind_best = np.argmin(losses)
+    route = routes[ind_best]
+    loss = losses[ind_best]
+    # params = losses[ind_best]
+    duration = (route[-1, 3] - route[0, 3])
+    final_target_pos = target_pos + np.array([np.cos(target_angle), np.sin(target_angle)]) * target_speed * duration
+    final_distance = np.linalg.norm(final_target_pos - route[-1][:2])
 
-    return [dict(route=r, segments=p, loss=l) for r,p,l in zip(routes, params, losses)]
+    return dict(route=[waypoint_to_dict(wp) for wp in route],
+                loss=float(loss),
+                duration=float(duration),
+                final_target_pos=dict(x=float(final_target_pos[0]), y=float(final_target_pos[1])),
+                final_distance=float(final_distance))
 
