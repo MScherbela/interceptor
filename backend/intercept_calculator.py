@@ -2,7 +2,6 @@ import jax.numpy as jnp
 import numpy as np
 import matplotlib.pyplot as plt
 import jax
-import matplotlib
 from jax.experimental.optimizers import adam
 
 
@@ -39,11 +38,11 @@ def loss_func(route, target_pos, target_angle, target_speed):
     final_waypoint = route[-1]
     pos = final_waypoint[:2]
     angle = final_waypoint[2]
-    final_time = final_waypoint[3]
     durations = jnp.diff(route[:,3])
+    total_duration = route[-1, 3] - route[0, 3]
 
     e_target = jnp.array([jnp.cos(target_angle), jnp.sin(target_angle)])
-    target_pos = target_pos + e_target * target_speed * final_time
+    target_pos = target_pos + e_target * target_speed * total_duration
 
     delta_r = target_pos - pos
     distance = jnp.linalg.norm(delta_r)
@@ -53,7 +52,7 @@ def loss_func(route, target_pos, target_angle, target_speed):
     loss_dist = loss_distance(distance)
     loss_bearing = 1 - jnp.dot(e_delta_r, e_interceptor)
     loss_angle = jnp.dot(e_delta_r, e_target)**2
-    loss_total_duration = 0.05*final_time
+    loss_total_duration = 0.05*total_duration
     loss_final_run_duration = jax.nn.sigmoid(-(durations[-1] / (0.25*min_duration_final)))
     loss_durations = jnp.sum(jax.nn.sigmoid(-(durations / (0.25*min_duration))))
 
@@ -87,55 +86,32 @@ def plot_routes(routes, losses, initial_target_pos, target_angle, target_speed, 
     axis.grid(alpha=0.5)
     axis.set_aspect('equal', adjustable='box')
 
-lr = 2e-2
-n_runs = 5
-n_segments = 2
-initial_state = jnp.zeros(4)
-target_pos = np.random.uniform(-5,5,[2])
-target_angle = np.random.uniform(0, 2*np.pi)
-target_speed = np.random.uniform(0.1, 0.9)
-target_params = (target_pos, target_angle, target_speed)
+def calculate_intercept(initial_pos, initial_angle, initial_speed, target_pos, target_angle, target_speed, initial_time = 0, n_segments=3, n_runs=10, lr=1e-2, n_steps=1000)
+    initial_state = jnp.array([initial_pos[0], initial_pos[1], initial_angle, initial_time])
+    target_params = (target_pos, target_angle, target_speed)
 
+    initial_params = np.stack([np.random.uniform(0, 2*np.pi, [n_runs, n_segments]),
+                             np.random.uniform(-1, 1, [n_runs, n_segments])], axis=-1)
+    opt_init, opt_update, opt_get_params = adam(lr)
+    val_grad_func = build_value_and_grad(initial_state, *target_params)
 
-initial_params = np.stack([np.random.uniform(0, 2*np.pi, [n_runs, n_segments]),
-                         np.random.uniform(-1, 1, [n_runs, n_segments])], axis=-1)
-opt_init, opt_update, opt_get_params = adam(lr)
-opt_state = opt_init(initial_params)
+    @jax.jit
+    def opt_step(step_nr, _opt_state):
+        p = opt_get_params(_opt_state)
+        _losses, g = val_grad_func(p)
+        return opt_update(step_nr, g, opt_state), _losses
 
-val_grad_func = build_value_and_grad(initial_state, *target_params)
+    opt_state = opt_init(initial_params)
 
-@jax.jit
-def opt_step(step_nr, opt_state):
+    for n in range(n_steps):
+        opt_state, _ = opt_step(n, opt_state)
     params = opt_get_params(opt_state)
-    losses, g = val_grad_func(params)
-    return opt_update(step_nr, g, opt_state), losses
+    routes = calc_route_batch(initial_state, params)
+    losses = loss_batch(routes, *target_params)
+    ind_routes = np.argsort(losses)
+    params = params[ind_routes]
+    routes = routes[ind_routes]
+    losses = losses[ind_routes]
 
-
-plt.close("all")
-all_losses = []
-for n in range(1000):
-    # if n%500 == 0:
-    #     plt.figure()
-    #     params = opt_get_params(opt_state)
-    #     routes = calc_route_batch(initial_state, params)
-    #     losses = loss_batch(routes, *target_params)
-    #     plot_routes(routes, losses, *target_params)
-    #     plt.title(f"{n} steps")
-
-    opt_state, step_losses = opt_step(n, opt_state)
-    all_losses.append(step_losses)
-
-fig, (ax_map, ax_loss) = plt.subplots(1,2, figsize=(14,6), gridspec_kw=dict(width_ratios=[3,1]))
-params = opt_get_params(opt_state)
-routes = calc_route_batch(initial_state, params)
-losses = loss_batch(routes, *target_params)
-ind_routes = np.argsort(losses)
-routes = routes[ind_routes]
-losses = losses[ind_routes]
-plot_routes(routes, losses, *target_params, ax_map)
-ax_map.set_title(f"{n} steps")
-
-all_losses = np.array(all_losses)
-all_losses = all_losses[:, ind_routes]
-ax_loss.plot(all_losses)
+    return [dict(route=r, segments=p, loss=l) for r,p,l in zip(routes, params, losses)]
 
