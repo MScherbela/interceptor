@@ -1,7 +1,29 @@
 <template>
-  <b-card title="Abfangkurs">
-    <b-button v-on:click="get_intercept_course">Berechnen</b-button>
-    {{ a }}
+  <b-card>
+    <form v-on:submit.prevent="get_intercept_course">
+      <b-form-row>
+                <b-col cols="8">
+          <b-form-group label-for="target_ship" label="Ziel">
+            <b-form-select v-model="target_id" id="target_ship" :options="target_options"/>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group label="Segmente" label-for="n_segments">
+            <b-form-input id="n_segments" v-model="n_segments" type="number" step="1" max="5" min="1"/>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+      <b-form-row>
+        <b-col>
+          <b-button type="submit">Abfangen</b-button>
+        </b-col>
+      </b-form-row>
+    </form>
+    <div v-if="intercept != null">
+      <ul v-for="wp in intercept.route" :key="wp">
+        <li>{{wp.t}}, {{wp.heading}}</li>
+      </ul>
+    </div>
   </b-card>
 </template>
 
@@ -13,17 +35,26 @@ export default {
   name: "InterceptControl",
   data() {
     return {
-      a: 0
+      n_segments: 3,
+      target_id: 0
     }
   },
   props: {
     ships: Array,
     uboot_pos: Object,
-    time: Number
+    time: Number,
+    intercept: Object
+  },
+  computed: {
+    target_options() {
+      return this.ships.map((s) => {
+        return {value: s.id, text: s.name}
+      })
+    }
   },
   methods: {
     get_intercept_params() {
-      const target = this.ships[0].pos
+      const target = this.ships.find(s => s.id == this.target_id).pos
       return {
         x: this.uboot_pos.x,
         y: this.uboot_pos.y,
@@ -34,13 +65,16 @@ export default {
         target_heading: target.heading,
         target_speed: target.speed,
         time: this.time,
-        n_segments: 2
+        n_segments: this.n_segments
       }
     },
     get_intercept_course() {
       axios.get("http://localhost:5000/api",
           {params: this.get_intercept_params()}
-      ).then(response => {console.log(response.data); this.$store.commit('set_intercept', response.data)}
+      ).then(response => {
+            console.log(response.data);
+            this.$store.commit('set_intercept', response.data)
+          }
       ).catch(e => console.log(e))
     }
   }

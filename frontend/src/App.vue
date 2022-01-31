@@ -11,7 +11,9 @@
           <InterceptControl
               :ships="$store.state.ships"
               :uboot_pos="$store.state.uboot_pos"
-              :time="this.$store.state.time"/>
+              :time="this.$store.state.time"
+              :intercept="$store.state.intercept"
+          />
         </b-col>
         <b-col cols="3">
           <ShipList/>

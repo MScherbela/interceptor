@@ -12,7 +12,7 @@ def heading_to_angle(heading):
 
 
 def angle_to_heading(angle):
-    return 90 - (angle * 180 / PI)
+    return (90 - (angle * 180 / PI)) % 360
 
 
 @app.route("/")
@@ -44,7 +44,7 @@ def api():
         n_segments=int(args.get('n_segments', 3))
     )
 
-    result = calculate_intercept(**intercept_params)
+    result,_ = calculate_intercept(**intercept_params)
     result['duration'] *= 3600
     for wp in result['route']:
         wp['t'] *= 3600

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card title="Uhrzeit">
+    <b-card>
       <b-time v-model="time" show-seconds locale="de"/>
       <b-button-group class="mt-2">
         <template v-for="speed in [0, 1, 10, 100]">
