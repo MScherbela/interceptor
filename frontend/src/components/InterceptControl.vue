@@ -36,7 +36,9 @@ export default {
   data() {
     return {
       n_segments: 2,
-      target_id: 0
+      target_id: 0,
+      // backend_url: "http://localhost:5000/api",
+      backend_url: "https://uboot.scherbela.com/api"
     }
   },
   props: {
@@ -69,7 +71,7 @@ export default {
       }
     },
     get_intercept_course() {
-      axios.get("http://localhost:5000/api",
+      axios.get(this.backend_url,
           {params: this.get_intercept_params()}
       ).then(response => {
             console.log(response.data);
