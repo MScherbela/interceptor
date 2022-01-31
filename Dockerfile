@@ -6,7 +6,7 @@ RUN apt-get -y install python3 python3-pip
 
 # Install python-backend requirements (installing them already here to improve docker caching)
 ADD backend/requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Copy source code
 ADD backend/ .
