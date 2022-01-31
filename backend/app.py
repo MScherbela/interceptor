@@ -6,7 +6,6 @@ app = Flask('app')
 CORS(app)
 PI = 3.14159265359
 
-
 def heading_to_angle(heading):
     return (90 - heading) * PI / 180
 
