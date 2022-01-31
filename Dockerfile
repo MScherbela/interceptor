@@ -20,6 +20,7 @@ RUN npm install vue
 RUN npm run build
 RUN pwd
 RUN ls -lah /
+RUN ls -lah /workdir
 RUN ls -lah
 RUN cp dist/* ../frontend/static
 
