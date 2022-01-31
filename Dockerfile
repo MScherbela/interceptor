@@ -18,11 +18,7 @@ ADD frontend/ ./frontend
 WORKDIR frontend
 RUN npm install vue
 RUN npm run build
-RUN pwd
-RUN ls -lah /
-RUN ls -lah /workdir
-RUN ls -lah
-RUN cp dist/* ../frontend/static
+RUN cp dist/* ../backend/static
 
 # Switch back to backend and start server
 WORKDIR ../backend
