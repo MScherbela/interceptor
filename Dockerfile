@@ -2,7 +2,7 @@ FROM node:latest
 
 RUN apt-get -y clean all && apt-get -y update && apt-get -y upgrade
 RUN apt-get -y install bash vim less
-RUN apt-get -y install python3.8
+RUN apt-get -y install python
 
 # Install python-backend requirements (installing them already here to improve docker caching)
 ADD backend/requirements.txt .
