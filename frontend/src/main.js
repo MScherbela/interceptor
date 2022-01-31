@@ -36,10 +36,10 @@ class Position {
     }
 
     create_position(rel_direction, distance, heading, speed) {
-        const angle = (this.heading + rel_direction) * Math.PI / 180
+        const angle = (90 - (this.heading + rel_direction)) * Math.PI / 180
         return new Position(
-            this.x + distance * Math.sin(angle),
-            this.y + distance * Math.cos(angle),
+            this.x + distance * Math.cos(angle),
+            this.y + distance * Math.sin(angle),
             heading,
             speed)
     }
@@ -48,8 +48,8 @@ class Position {
         const dx = pos.x - this.x
         const dy = pos.y - this.y
         const distance = Math.sqrt(dx * dx + dy * dy)
-        const angle = 90 - Math.atan2(dy, dx) * 180 / Math.PI
-        const rel_direction = (this.heading + angle + 360) % 360
+        const angle = 90 - (Math.atan2(dy, dx) * 180 / Math.PI)
+        const rel_direction = (angle - this.heading + 720) % 360
         return {distance, rel_direction}
     }
 
@@ -173,19 +173,19 @@ const store = new Vuex.Store({
             state.uboot_pos.speed = speed
         },
         update_ship_speed(state, {id, speed}) {
-            state.ships.filter((ship) => ship.id == id).map((ship) => ship.pos.speed = speed)
+            state.ships.filter((ship) => ship.id == id).map(ship => ship.pos.speed = speed)
         },
         update_ship_heading(state, {id, heading}) {
-            state.ships.filter((ship) => ship.id == id).map((ship) => ship.pos.heading = heading)
+            state.ships.filter((ship) => ship.id == id).map(ship => ship.pos.heading = heading)
         },
         update_ship_distance(state, {id, dist}) {
-            state.ships.filter((ship) => ship.id == id).map((ship) => {
+            state.ships.filter((ship) => ship.id == id).map(ship => {
                 const rel_dir = state.uboot_pos.get_relative_position(ship.pos).rel_direction
                 ship.pos = state.uboot_pos.create_position(rel_dir, dist, ship.pos.heading, ship.pos.speed)
             })
         },
         update_ship_rel_direction(state, {id, rel_direction}) {
-            state.ships.filter((ship) => ship.id == id).map((ship) => {
+            state.ships.filter(ship => ship.id == id).map(ship => {
                 const distance = state.uboot_pos.get_relative_position(ship.pos).distance
                 ship.pos = state.uboot_pos.create_position(rel_direction, distance, ship.pos.heading, ship.pos.speed)
             })

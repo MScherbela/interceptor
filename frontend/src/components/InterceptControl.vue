@@ -35,7 +35,7 @@ export default {
   name: "InterceptControl",
   data() {
     return {
-      n_segments: 3,
+      n_segments: 2,
       target_id: 0
     }
   },

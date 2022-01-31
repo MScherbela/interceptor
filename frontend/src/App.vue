@@ -1,22 +1,38 @@
 <template>
-  <div id="app" data="data">
-    <b-container fluid>
-      <b-row>
-        <b-col>
-          <ShipMap :ships="$store.state.ships" :uboot_pos="$store.state.uboot_pos" :intercept="$store.state.intercept"/>
+  <div id="app" data="data" class="fill">
+    <b-container fluid style="width: 95%" class="mt-2 mb-2">
+      <b-row class="vh-100">
+        <b-col cols="6" class="flex-column d-flex">
+          <b-row><b-col><h3>Angriffskarte</h3></b-col></b-row>
+          <b-row class="flex-grow-1" style="min-height: 700px">
+            <b-col>
+              <ShipMap :ships="$store.state.ships" :uboot_pos="$store.state.uboot_pos" :intercept="$store.state.intercept"/>
+            </b-col>
+          </b-row>
         </b-col>
         <b-col cols="3">
-          <UBootInput/>
-          <TimeControl/>
-          <InterceptControl
-              :ships="$store.state.ships"
-              :uboot_pos="$store.state.uboot_pos"
-              :time="this.$store.state.time"
-              :intercept="$store.state.intercept"
-          />
+          <b-row><b-col><h3>Ziele</h3></b-col></b-row>
+          <b-row>
+            <b-col>
+              <ShipList/>
+            </b-col>
+          </b-row>
         </b-col>
         <b-col cols="3">
-          <ShipList/>
+          <b-row>
+            <b-col><h3>Einstellungen</h3></b-col></b-row>
+          <b-row>
+            <b-col>
+              <UBootInput/>
+              <TimeControl/>
+              <InterceptControl
+                  :ships="$store.state.ships"
+                  :uboot_pos="$store.state.uboot_pos"
+                  :time="this.$store.state.time"
+                  :intercept="$store.state.intercept"
+              />
+            </b-col>
+          </b-row>
         </b-col>
       </b-row>
     </b-container>
@@ -44,6 +60,10 @@ export default {
 </script>
 
 <style>
+.fill {
+  min-height: 100%;
+  height: 100%;
+}
 /*#app {*/
 /*  font-family: Avenir, Helvetica, Arial, sans-serif;*/
 /*  -webkit-font-smoothing: antialiased;*/

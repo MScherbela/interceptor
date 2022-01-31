@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <b-card style="height: 95%" ref="shipmap_div">
     <Plotly :data="plot_data" :layout="plot_layout" :displayModeBar="false"/>
-  </div>
+  </b-card>
 </template>
 
 
@@ -62,6 +62,14 @@ export default {
       return this.get_ship_shape(this.uboot_pos, 'black', 0.7, 0.6)
     }
   },
+  data() {
+    return {
+      plot_height: 500
+    }
+  },
+  mounted(){
+    this.plot_height = this.$refs.shipmap_div.clientHeight - 50
+  },
   computed: {
     plot_data() {
       let traces = this.get_ship_traces()
@@ -72,7 +80,8 @@ export default {
     },
     plot_layout() {
       return {
-        height: 700,
+        height: this.plot_height,
+        autosize: true,
         margin: {
           t: 20,
           b: 20,
@@ -81,13 +90,13 @@ export default {
         },
         yaxis: {
           // range: [-20, 20],
-          scaleanchor: 'x',
-          scaleratio: 1,
           dtick: 1,
           zeroline: false
         },
         xaxis: {
           // range: [-20, 20],
+          scaleanchor: 'y',
+          scaleratio: 1,
           dtick: 1,
           zeroline: false
         },

@@ -9,7 +9,7 @@
             </b-form-group>
           </b-col>
           <b-col>
-            <b-form-group label="ktn" label-for="speed">
+            <b-form-group label="kn" label-for="speed">
               <b-form-input id="speed" v-model="speed" type="number" step="1" max="359" min="0"/>
             </b-form-group>
           </b-col>

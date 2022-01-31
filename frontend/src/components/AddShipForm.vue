@@ -3,12 +3,12 @@
     <b-form @submit.prevent="$store.commit('add_ship', $data)">
       <b-form-row>
         <b-col>
-          <b-form-group label="Ship name" label-for="ship_name">
+          <b-form-group label="Name" label-for="ship_name">
             <b-form-input v-model="name" id="ship_name" type="text" required/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label-for="ship_type" label="Ship type">
+          <b-form-group label-for="ship_type" label="Typ">
             <b-form-select v-model="ship_type" id="ship_type" :options="ship_type_options"/>
           </b-form-group>
         </b-col>
@@ -20,14 +20,14 @@
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="Speed / knts" label-for="ship_speed">
+          <b-form-group label="kn" label-for="ship_speed">
             <b-form-input v-model="speed" id="ship_speed" type="number" step="0.1"/>
           </b-form-group>
         </b-col>
       </b-form-row>
       <b-form-row>
         <b-col>
-          <b-form-group label="Distanz" label-for="ship_distance">
+          <b-form-group label="Distanz / sm" label-for="ship_distance">
             <b-form-input v-model="distance" id="ship_distance" type="number" step="0.01"/>
           </b-form-group>
         </b-col>
@@ -65,7 +65,7 @@ export default {
   },
   data() {
     return {
-      name: "",
+      name: "Kontakt",
       ship_type: "Unbekannt",
       tons: 1000,
       speed: 7.0,

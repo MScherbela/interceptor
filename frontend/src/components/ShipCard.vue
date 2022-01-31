@@ -32,7 +32,7 @@
             </b-col>
 
             <b-col>
-              <b-form-group label="ktn" label-for="ship_speed">
+              <b-form-group label="kn" label-for="ship_speed">
                 <b-form-input v-model="speed" id="ship_speed" type="number"/>
               </b-form-group>
             </b-col>
