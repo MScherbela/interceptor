@@ -1,8 +1,7 @@
 FROM python:3.8
 
 RUN apt-get -y clean all && apt-get -y update && apt-get -y upgrade
-RUN apt-get -y install npm vim less
-RUN npm install npm@latest -g
+RUN apt-get -y install npm nodejs vim less
 
 # Install python-backend requirements (installing them already here to improve docker caching)
 ADD backend/requirements.txt .
