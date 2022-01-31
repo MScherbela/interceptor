@@ -1,6 +1,6 @@
 FROM python:3.8
 
-RUN apt-get -y update && apt-get -y upgrade
+RUN apt-get -y clean all && apt-get -y update && apt-get -y upgrade
 RUN apt-get -y install npm vim less
 
 # Copy source code and install backend requirements
