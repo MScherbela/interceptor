@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:16
 
 RUN apt-get -y clean all && apt-get -y update && apt-get -y upgrade
 RUN apt-get -y install bash vim less
