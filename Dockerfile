@@ -14,6 +14,7 @@ ADD frontend/ .
 
 # Build front-end package
 WORKDIR /frontend
+RUN npm install vue
 RUN npm run build
 RUN cp dist/* ../frontend/static
 
