@@ -139,7 +139,15 @@ def calculate_intercept(initial_pos, initial_angle, initial_speed, target_pos, t
     final_target_pos = target_pos + np.array([np.cos(target_angle), np.sin(target_angle)]) * target_speed * duration
     final_distance = np.linalg.norm(final_target_pos - route[-1][:2])
 
-    return dict(route=route_to_list_of_dicts(route),
+    e_target = np.array([np.cos(target_angle), np.sin(target_angle)])
+    delta_t = route[:,3] - route[0,3]
+    distances_to_target = np.linalg.norm(route[:,:2] - (target_pos + e_target * target_speed * delta_t[:, None]), axis=1)
+
+    route_list = route_to_list_of_dicts(route)
+    for wp, d in zip(route_list, distances_to_target):
+        wp['target_dist'] = float(d)
+
+    return dict(route=route_list,
                 loss=float(loss),
                 duration=float(duration),
                 final_target_pos=dict(x=float(final_target_pos[0]), y=float(final_target_pos[1])),

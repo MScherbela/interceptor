@@ -29,6 +29,12 @@ class Position {
         this.y += e[1] * this.speed * seconds / 3600
     }
 
+    get_moved_copy(seconds) {
+        let pos = new Position(this.x, this.y, this.heading, this.speed)
+        pos.move(seconds)
+        return pos
+    }
+
     create_position(rel_direction, distance, heading, speed) {
         const angle = (this.heading + rel_direction) * Math.PI / 180
         return new Position(
@@ -66,9 +72,16 @@ class Position {
 
 // eslint-disable-next-line no-unused-vars
 class Ship {
-    constructor(id = 0, ship_type = "Unbekannt", name = "Kontakt", tons = 0, pos = null, alive = true) {
+    static default_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+
+    constructor(id = 0, ship_type = "Unbekannt", name = "Kontakt", tons = 0, pos = null, color = null, alive = true) {
         if (pos == null) {
             pos = new Position(0, 0, 0, 0)
+        }
+        if (color == null) {
+            this.color = Ship.default_colors[0]
+        } else {
+            this.color = color
         }
         this.id = id
         this.alive = alive
@@ -76,10 +89,6 @@ class Ship {
         this.name = name
         this.tons = tons
         this.pos = pos
-    }
-
-    is_warship() {
-        return (this.ship_type != "Unbekannt") && (this.ship_type != 'Handelsschiff')
     }
 }
 
@@ -89,7 +98,10 @@ function increment_ship_id(state) {
 }
 
 function add_ship(state, ship_data) {
-
+    const color = Ship.default_colors.find(c => {
+        const ship = state.ships.find(s => s.color == c);
+        return ship == null
+    })
     const pos = state.uboot_pos.create_position(
         ship_data.rel_direction,
         ship_data.distance,
@@ -100,9 +112,27 @@ function add_ship(state, ship_data) {
         ship_data.ship_type,
         ship_data.name,
         ship_data.tons,
-        pos
+        pos,
+        color
     )
     state.ships.push(ship)
+}
+
+export function seconds_to_timestamp(time) {
+    while(time > 86400){
+        time -= 86400
+    }
+    const h = Math.floor(time / 3600)
+    const m = Math.floor(((time - 3600 * h) / 60))
+    const s = Math.floor((time - 3600 * h - 60 * m))
+    return h + ":" + m + ":" + s
+}
+
+export function timestamp_to_seconds(t) {
+    const h = parseFloat(t.substring(0, 2))
+    const m = parseFloat(t.substring(3, 5))
+    const s = parseFloat(t.substring(6, 8))
+    return 3600 * h + 60 * m + s
 }
 
 const store = new Vuex.Store({
@@ -110,7 +140,7 @@ const store = new Vuex.Store({
         ship_id_counter: 0,
         time: 0,
         play_speed: 1,
-        uboot_pos: new Position(0, 0, 0, 0),
+        uboot_pos: new Position(0, 0, 0, 8),
         ships: [],
         intercept: null
     },
@@ -122,15 +152,15 @@ const store = new Vuex.Store({
         remove_ship(state, id) {
             state.ships = state.ships.filter(s => s.id != id)
         },
-        set_play_speed(state, speed){
+        set_play_speed(state, speed) {
             state.play_speed = speed
         },
         pass_time: function (state, seconds = 1) {
             state.time += seconds
-            while(state.time < 0){
+            while (state.time < 0) {
                 state.time += 86400
             }
-            while(state.time > 86400){
+            while (state.time > 86400) {
                 state.time -= 86400
             }
             state.ships.map((s) => s.pos.move(seconds))
@@ -142,10 +172,10 @@ const store = new Vuex.Store({
         update_uboot_speed(state, speed) {
             state.uboot_pos.speed = speed
         },
-        update_ship_speed(state, {id, speed}){
+        update_ship_speed(state, {id, speed}) {
             state.ships.filter((ship) => ship.id == id).map((ship) => ship.pos.speed = speed)
         },
-        update_ship_heading(state, {id, heading}){
+        update_ship_heading(state, {id, heading}) {
             state.ships.filter((ship) => ship.id == id).map((ship) => ship.pos.heading = heading)
         },
         update_ship_distance(state, {id, dist}) {
@@ -160,8 +190,12 @@ const store = new Vuex.Store({
                 ship.pos = state.uboot_pos.create_position(rel_direction, distance, ship.pos.heading, ship.pos.speed)
             })
         },
-        set_intercept(state, intercept){
+        set_intercept(state, intercept) {
             state.intercept = intercept
+            state.intercept.final_ship_positions = state.ships.map(s => {
+                return {pos: s.pos.get_moved_copy(intercept.duration), color: s.color}
+            })
+            state.intercept.route.map(wp => {wp.timestamp = seconds_to_timestamp(wp.t)})
         }
     }
 })

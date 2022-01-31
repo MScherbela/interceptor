@@ -20,8 +20,8 @@
       </b-form-row>
     </form>
     <div v-if="intercept != null">
-      <ul v-for="wp in intercept.route" :key="wp">
-        <li>{{wp.t}}, {{wp.heading}}</li>
+      <ul v-for="wp in intercept.route" :key="wp.t">
+        <li><b>{{wp.timestamp}}:</b> Kurs {{wp.heading.toFixed(1)}} deg, {{wp.target_dist.toFixed(1)}} sm</li>
       </ul>
     </div>
   </b-card>

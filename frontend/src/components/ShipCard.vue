@@ -1,7 +1,7 @@
 <template>
   <div class="ship">
-    <div class="card" :class="{sunk: !ship.alive, warship: ship.is_warship()}">
-      <b-card-header class="pt-2 pb-2">
+    <div class="card" :class="{sunk: !ship.alive}">
+      <b-card-header class="pt-2 pb-2" :style="{'background-color': ship.color}">
         <b-row>
           <b-col>
             <b-card-title class="mb-0">{{ ship.name }}: {{ ship.tons }} BRT</b-card-title>
@@ -97,14 +97,6 @@ export default {
 
 .sunk {
   opacity: 0.4;
-}
-
-.warship .card-body {
-  background-color: #d6969c;
-}
-
-.warship .card-header {
-  background-color: #b34752
 }
 
 .card-title {

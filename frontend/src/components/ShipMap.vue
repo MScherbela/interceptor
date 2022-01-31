@@ -27,7 +27,10 @@ export default {
           y: [this.uboot_pos.y, s.pos.y],
           type: 'scatter',
           name: s.name + ": " + rel_pos.distance.toFixed(1) + " sm, " + rel_pos.rel_direction.toFixed(0) + "°",
-          showlegend: true
+          showlegend: true,
+          line: {
+            color: s.color
+          }
         }
       })
     },
@@ -38,10 +41,26 @@ export default {
         y: route.map(wp => wp.y),
         type: 'scatter',
         name: 'Intercept',
-        color: 'red',
+        line: {
+          color: 'black',
+        },
         showlegend: true
       }
     },
+    get_ship_shape(pos, color, size, opacity = 0.4) {
+      return {
+        type: 'path',
+        path: pos.to_svg_path(size),
+        fillcolor: color,
+        line: {
+          width: 0
+        },
+        opacity: opacity,
+      }
+    },
+    get_uboot_shape() {
+      return this.get_ship_shape(this.uboot_pos, 'black', 0.7, 0.6)
+    }
   },
   computed: {
     plot_data() {
@@ -61,14 +80,14 @@ export default {
           r: 20
         },
         yaxis: {
-          range: [-20, 20],
+          // range: [-20, 20],
           scaleanchor: 'x',
           scaleratio: 1,
           dtick: 1,
           zeroline: false
         },
         xaxis: {
-          range: [-20, 20],
+          // range: [-20, 20],
           dtick: 1,
           zeroline: false
         },
@@ -77,25 +96,9 @@ export default {
           y: 0.02
         },
         shapes:
-            this.ships.map((s) => {
-              return {
-                type: 'path',
-                path: s.pos.to_svg_path(),
-                fillcolor: s.is_warship() ? "red" : "blue",
-                line: {
-                  width: 0
-                },
-                opacity: 0.4
-              }
-            }).concat([{
-              type: 'path',
-              path: this.uboot_pos.to_svg_path(0.7),
-              fillcolor: "black",
-              line: {
-                width: 0
-              },
-              opacity: 0.4
-            }])
+            this.ships.map(s => this.get_ship_shape(s.pos, s.color, 0.5, 0.7)
+            ).concat(this.intercept != null ? this.intercept.final_ship_positions.map(p => this.get_ship_shape(p.pos, p.color, 0.5, 0.3)) : []
+            ).concat([this.get_uboot_shape()])
       }
     }
   },
