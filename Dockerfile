@@ -14,7 +14,7 @@ ADD frontend/ .
 
 # Build front-end package
 WORKDIR /frontend
-RUN npm build
+RUN npm run build
 RUN cp dist/* ../frontend/static
 
 # Switch back to backend and start server
