@@ -11,8 +11,8 @@ RUN python3 -m pip install --upgrade pip
 RUN pip3 install -r requirements.txt
 
 # Copy source code
-ADD backend/ .
-ADD frontend/ .
+ADD backend/ ./backend
+ADD frontend/ ./frontend
 
 # Build front-end package
 WORKDIR frontend
