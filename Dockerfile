@@ -19,6 +19,7 @@ WORKDIR frontend
 RUN npm install vue
 RUN npm run build
 RUN cp dist/* ../backend/static -r
+RUN pip3 install jaxlib
 
 # Switch back to backend and start server
 WORKDIR ../backend
