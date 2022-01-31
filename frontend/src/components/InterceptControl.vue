@@ -1,5 +1,5 @@
 <template>
-  <b-card>
+  <b-card class="my-1">
     <form v-on:submit.prevent="get_intercept_course">
       <b-form-row>
                 <b-col cols="8">
@@ -20,9 +20,7 @@
       </b-form-row>
     </form>
     <div v-if="intercept != null">
-      <ul v-for="wp in intercept.route" :key="wp.t">
-        <li><b>{{wp.timestamp}}:</b> Kurs {{wp.heading.toFixed(1)}} deg, {{wp.target_dist.toFixed(1)}} sm</li>
-      </ul>
+      <b-table :items="intercept_table_data" class="mt-2"/>
     </div>
   </b-card>
 </template>
@@ -52,6 +50,11 @@ export default {
       return this.ships.map((s) => {
         return {value: s.id, text: s.name}
       })
+    },
+    intercept_table_data(){
+      if(this.intercept == null){
+        return null}
+      return this.intercept.route.map(wp => {return {Uhrzeit:wp.timestamp, Kurs: wp.heading.toFixed(1), Distanz:wp.target_dist.toFixed(1)}})
     }
   },
   methods: {

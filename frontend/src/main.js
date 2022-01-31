@@ -118,13 +118,19 @@ function add_ship(state, ship_data) {
     state.ships.push(ship)
 }
 
+function pad(num, size) {
+    num = num.toString();
+    while (num.length < size) num = "0" + num;
+    return num;
+}
+
 export function seconds_to_timestamp(time) {
     while(time > 86400){
         time -= 86400
     }
-    const h = Math.floor(time / 3600)
-    const m = Math.floor(((time - 3600 * h) / 60))
-    const s = Math.floor((time - 3600 * h - 60 * m))
+    const h = pad(Math.floor(time / 3600), 2)
+    const m = pad(Math.floor(((time - 3600 * h) / 60)), 2)
+    const s = pad(Math.floor((time - 3600 * h - 60 * m)), 2)
     return h + ":" + m + ":" + s
 }
 
@@ -165,6 +171,9 @@ const store = new Vuex.Store({
             }
             state.ships.map((s) => s.pos.move(seconds))
             state.uboot_pos.move(seconds)
+        },
+        set_time(state, time){
+            state.time = time
         },
         update_uboot_heading(state, heading) {
             state.uboot_pos.heading = heading

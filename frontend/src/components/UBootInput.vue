@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="my-1">
     <b-card title="U-Boot">
       <form>
         <b-form-row>

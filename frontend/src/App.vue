@@ -23,8 +23,8 @@
             <b-col><h3>Einstellungen</h3></b-col></b-row>
           <b-row>
             <b-col>
-              <UBootInput/>
               <TimeControl/>
+              <UBootInput/>
               <InterceptControl
                   :ships="$store.state.ships"
                   :uboot_pos="$store.state.uboot_pos"

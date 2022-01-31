@@ -1,9 +1,11 @@
 <template>
-  <div>
+  <div class="my-1">
     <b-card>
       <b-row>
         <b-col>
           <b-time v-model="time" show-seconds locale="de" style="width:100%"/>
+          <b-form-checkbox v-model="update_time" name="check-button" switch class="my-1">Karte aktualisieren</b-form-checkbox>
+
         </b-col>
       </b-row>
       <b-row>
@@ -29,6 +31,11 @@ import {seconds_to_timestamp, timestamp_to_seconds} from "@/main";
 
 export default {
   name: "TimeControl",
+  data() {
+    return {
+      update_time: true
+    }
+  },
   computed: {
     time: {
       get() {
@@ -37,14 +44,19 @@ export default {
       set(t) {
         if (t.length > 0) {
           const new_time = timestamp_to_seconds(t)
-          let delta_t = (new_time - this.$store.state.time)
-          while (delta_t > 43200) {
-            delta_t -= 86400
+          if (this.update_time) {
+            let delta_t = (new_time - this.$store.state.time)
+            while (delta_t > 43200) {
+              delta_t -= 86400
+            }
+            while (delta_t < -43200) {
+              delta_t += 86400
+            }
+            this.$store.commit('pass_time', delta_t)
+          } else {
+            this.$store.commit('set_time', new_time)
           }
-          while (delta_t < -43200) {
-            delta_t += 86400
-          }
-          this.$store.commit('pass_time', delta_t)
+
         }
       }
     }

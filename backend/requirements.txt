@@ -3,4 +3,5 @@ flask
 flask-cors
 numpy
 jax
+jaxlib
 matplotlib
