@@ -16,7 +16,7 @@ def angle_to_heading(angle):
 
 @app.route("/")
 def static_index():
-    return send_file('index.html')
+    return send_file('static/index.html')
 
 #
 # @app.route("/js/<filename>")
