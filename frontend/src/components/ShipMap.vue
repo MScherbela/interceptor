@@ -60,6 +60,9 @@ export default {
     },
     get_uboot_shape() {
       return this.get_ship_shape(this.uboot_pos, 'black', 0.7, 0.6)
+    },
+    adjust_plot_height(){
+      this.plot_height = this.$refs.shipmap_div.clientHeight - 50
     }
   },
   data() {
@@ -68,7 +71,8 @@ export default {
     }
   },
   mounted(){
-    this.plot_height = this.$refs.shipmap_div.clientHeight - 50
+    window.addEventListener("resize", this.adjust_plot_height)
+    this.adjust_plot_height()
   },
   computed: {
     plot_data() {
