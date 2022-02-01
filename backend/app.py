@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, request
+from flask import Flask, request, send_file
 from flask_cors import CORS
 from intercept_calculator import calculate_intercept
 
@@ -16,17 +16,17 @@ def angle_to_heading(angle):
 
 @app.route("/")
 def static_index():
-    return send_from_directory('static', 'index.html')
+    return send_file('index.html')
 
-
-@app.route("/js/<filename>")
-def static_js(filename):
-    return send_from_directory('static/js', filename)
-
-
-@app.route("/css/<filename>")
-def static_css(filename):
-    return send_from_directory('static/css', filename)
+#
+# @app.route("/js/<filename>")
+# def static_js(filename):
+#     return send_from_directory('static/js', filename)
+#
+#
+# @app.route("/css/<filename>")
+# def static_css(filename):
+#     return send_from_directory('static/css', filename)
 
 
 @app.route("/api", methods=['GET'])
