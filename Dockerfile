@@ -9,7 +9,6 @@ RUN apt-get -y install python3 python3-pip
 ADD backend/requirements.txt .
 RUN python3 -m pip install --upgrade pip
 RUN pip3 install -r requirements.txt
-RUN npm install vue
 
 # Copy source code
 ADD backend/ ./backend
@@ -17,6 +16,7 @@ ADD frontend/ ./frontend
 
 # Build front-end package
 WORKDIR frontend
+RUN npm install vue
 RUN npm run build
 RUN cp dist/* ../backend/static -r
 
