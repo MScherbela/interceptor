@@ -27,7 +27,7 @@
       </b-form-row>
       <b-form-row>
         <b-col>
-          <b-form-group label="Distanz / sm" label-for="ship_distance">
+          <b-form-group label="Distanz" label-for="ship_distance">
             <b-form-input v-model="distance" id="ship_distance" type="number" step="0.01"/>
           </b-form-group>
         </b-col>

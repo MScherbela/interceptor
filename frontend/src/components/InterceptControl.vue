@@ -2,18 +2,47 @@
   <b-card class="my-1">
     <form v-on:submit.prevent="get_intercept_course">
       <b-form-row>
-                <b-col cols="8">
+        <b-col>
           <b-form-group label-for="target_ship" label="Ziel">
             <b-form-select v-model="target_id" id="target_ship" :options="target_options"/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="Segmente" label-for="n_segments">
-            <b-form-input id="n_segments" v-model="n_segments" type="number" step="1" max="5" min="1"/>
+          <b-form-group label="Seite" label-for="attack_side">
+            <b-form-select id="attack_side" v-model="attack_side"
+                           :options="[{value:0, text:'Beliebig'},{value:1, text:'Links'}, {value:2, text:'Rechts'}]"/>
           </b-form-group>
         </b-col>
       </b-form-row>
       <b-form-row>
+      <b-col col="3">
+        <b-form-group label="Segm." label-for="n_segments">
+          <b-form-input id="n_segments" v-model="n_segments" type="number" step="1" max="5" min="1"/>
+        </b-form-group>
+      </b-col>
+
+      <b-col>
+        <b-form-group label-for="desired_duration" label="Dauer / h">
+          <b-form-input v-model="desired_duration" id="desired_duration" type="number" step="0.1" min="0"/>
+        </b-form-group>
+      </b-col>
+      </b-form-row>
+      <b-form-row>
+        <b-col>
+          <b-form-group label-for="desired_distance" label="Distanz">
+            <b-form-input v-model="desired_distance" id="desired_distance" type="number" step="0.1" min="0"/>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group label-for="attack_bearing" label="Peilung">
+            <b-form-input v-model="attack_bearing" id="attack_bearing" type="number" step="1"/>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+      <b-form-row>
+        <b-col>
+          <b-form-checkbox v-model="fix_initial_angle" name="check-button" switch class="my-1">1. Kurs fix</b-form-checkbox>
+        </b-col>
         <b-col>
           <b-button type="submit">Abfangen</b-button>
         </b-col>
@@ -35,8 +64,13 @@ export default {
     return {
       n_segments: 2,
       target_id: 0,
-      // backend_url: "http://localhost:5000/api",
-      backend_url: "https://uboot.scherbela.com/api"
+      backend_url: "http://localhost:5000/api",
+      // backend_url: "https://uboot.scherbela.com/api",
+      desired_duration: 0,
+      desired_distance: 1.0,
+      fix_initial_angle: true,
+      attack_side: 0,
+      attack_bearing: 0
     }
   },
   props: {
@@ -51,10 +85,13 @@ export default {
         return {value: s.id, text: s.name}
       })
     },
-    intercept_table_data(){
-      if(this.intercept == null){
-        return null}
-      return this.intercept.route.map(wp => {return {Uhrzeit:wp.timestamp, Kurs: wp.heading.toFixed(1), Distanz:wp.target_dist.toFixed(1)}})
+    intercept_table_data() {
+      if (this.intercept == null) {
+        return null
+      }
+      return this.intercept.route.map(wp => {
+        return {Uhrzeit: wp.timestamp, Kurs: wp.heading.toFixed(1), Distanz: wp.target_dist.toFixed(1)}
+      })
     }
   },
   methods: {
@@ -70,7 +107,13 @@ export default {
         target_heading: target.heading,
         target_speed: target.speed,
         time: this.time,
-        n_segments: this.n_segments
+        n_segments: this.n_segments,
+        desired_duration: this.desired_duration * 3600,
+        desired_distance: this.desired_distance,
+        fix_initial_angle: this.fix_initial_angle,
+        attack_bearing: this.attack_bearing,
+        attack_position_angle: this.attack_side == 1 ? -90 : 90,
+        fix_attack_side: this.attack_side != 0
       }
     },
     get_intercept_course() {

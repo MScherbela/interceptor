@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect
 from flask_cors import CORS
-from intercept_calculator import calculate_intercept
+from intercept_calculator import calculate_intercept, InterceptSettings
 
 app = Flask('app')
 CORS(app)
@@ -29,14 +29,22 @@ def api():
         target_angle=heading_to_angle(float(args['target_heading'])),
         target_speed=float(args['target_speed']),
         initial_time=float(args.get('time', 0)) / 3600,
-        n_segments=int(args.get('n_segments', 3))
     )
 
-    result,_ = calculate_intercept(**intercept_params)
+    cfg = InterceptSettings(duration=float(args.get('desired_duration', 0)) / 3600,
+                            distance=float(args.get('desired_distance', 1.0)),
+                            fix_initial_angle=(args.get('fix_initial_angle', 'true') == 'true'),
+                            n_segments=int(args.get('n_segments', 3)),
+                            attack_bearing=float(args.get('attack_bearing', 0.0)) * PI / 180,
+                            attack_position_angle=float(args.get('attack_position_angle', 90)) * PI/180,
+                            fix_attack_side=(args.get('fix_attack_side', 'false') == 'true'))
+
+    result,_ = calculate_intercept(**intercept_params, cfg=cfg)
     result['duration'] *= 3600
     for wp in result['route']:
         wp['t'] *= 3600
         wp['heading'] = angle_to_heading(wp['angle'])
+    print(result)
 
     return result
 
