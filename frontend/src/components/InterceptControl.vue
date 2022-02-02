@@ -61,8 +61,8 @@ export default {
     return {
       n_segments: 2,
       target_id: 0,
-      backend_url: "http://localhost:5000/api",
-      // backend_url: "https://uboot.scherbela.com/api",
+      // backend_url: "http://localhost:5000/api",
+      backend_url: "https://uboot.scherbela.com/api",
       desired_duration: 0,
       desired_distance: 1.0,
       fix_initial_angle: true,
