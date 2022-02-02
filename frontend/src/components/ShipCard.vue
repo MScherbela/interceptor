@@ -1,10 +1,16 @@
 <template>
   <div class="ship">
     <div class="card" :class="{sunk: !ship.alive}">
-      <b-card-header class="pt-2 pb-2" :style="{'background-color': ship.color}">
+      <b-card-header class="pt-2 pb-2" :style="{'background-color': ship.color, color: 'white'}">
         <b-row>
-          <b-col>
-            <b-card-title class="mb-0">{{ ship.name }}: {{ ship.tons }} BRT</b-card-title>
+          <b-col class="my-auto">
+            <b-card-title class="mb-0">
+              {{ ship.name }}: {{ ship.tons }} BRT
+            </b-card-title>
+          </b-col>
+          <b-col class="col-md-auto">
+            <b-icon-exclamation-circle-fill font-scale="1.5" v-if="ship.is_warship()"/>
+            <b-icon-question-circle-fill font-scale="1.5" v-if="ship.is_unknown()"/>
           </b-col>
           <b-col class="col-md-auto">
             <b-button-close v-on:click="$store.commit('remove_ship', id)"/>

@@ -1,5 +1,5 @@
 <template>
-  <div class="my-1">
+  <div>
     <b-card>
       <b-row>
         <b-col>

@@ -7,7 +7,7 @@
             <b-form-select v-model="target_id" id="target_ship" :options="target_options"/>
           </b-form-group>
         </b-col>
-        <b-col>
+        <b-col cols="4">
           <b-form-group label="Seite" label-for="attack_side">
             <b-form-select id="attack_side" v-model="attack_side"
                            :options="[{value:0, text:'Beliebig'},{value:1, text:'Links'}, {value:2, text:'Rechts'}]"/>
@@ -15,21 +15,18 @@
         </b-col>
       </b-form-row>
       <b-form-row>
-      <b-col col="3">
-        <b-form-group label="Segm." label-for="n_segments">
-          <b-form-input id="n_segments" v-model="n_segments" type="number" step="1" max="5" min="1"/>
-        </b-form-group>
-      </b-col>
-
-      <b-col>
-        <b-form-group label-for="desired_duration" label="Dauer / h">
-          <b-form-input v-model="desired_duration" id="desired_duration" type="number" step="0.1" min="0"/>
-        </b-form-group>
-      </b-col>
-      </b-form-row>
-      <b-form-row>
         <b-col>
-          <b-form-group label-for="desired_distance" label="Distanz">
+          <b-form-group label="Segm." label-for="n_segments">
+            <b-form-input id="n_segments" v-model="n_segments" type="number" step="1" max="5" min="1"/>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group label-for="desired_duration" label="Zeit / h">
+            <b-form-input v-model="desired_duration" id="desired_duration" type="number" step="0.1" min="0"/>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group label-for="desired_distance" label="Dist.">
             <b-form-input v-model="desired_distance" id="desired_distance" type="number" step="0.1" min="0"/>
           </b-form-group>
         </b-col>
@@ -40,11 +37,11 @@
         </b-col>
       </b-form-row>
       <b-form-row>
-        <b-col>
+        <b-col class="my-auto">
           <b-form-checkbox v-model="fix_initial_angle" name="check-button" switch class="my-1">1. Kurs fix</b-form-checkbox>
         </b-col>
-        <b-col>
-          <b-button type="submit">Abfangen</b-button>
+        <b-col class="col-md-auto">
+          <b-button type="submit" variant="danger">Abfangen</b-button>
         </b-col>
       </b-form-row>
     </form>
@@ -64,8 +61,8 @@ export default {
     return {
       n_segments: 2,
       target_id: 0,
-      // backend_url: "http://localhost:5000/api",
-      backend_url: "https://uboot.scherbela.com/api",
+      backend_url: "http://localhost:5000/api",
+      // backend_url: "https://uboot.scherbela.com/api",
       desired_duration: 0,
       desired_distance: 1.0,
       fix_initial_angle: true,
@@ -90,7 +87,12 @@ export default {
         return null
       }
       return this.intercept.route.map(wp => {
-        return {Uhrzeit: wp.timestamp, Kurs: wp.heading.toFixed(1), Distanz: wp.target_dist.toFixed(1)}
+        return {
+          Uhrzeit: wp.timestamp,
+          Kurs: wp.new_heading.toFixed(1),
+          Distanz: wp.target_dist.toFixed(1),
+          Peilung: wp.target_bearing.toFixed(0)
+        }
       })
     }
   },
@@ -130,5 +132,9 @@ export default {
 </script>
 
 <style scoped>
+
+label {
+  font-size: 8pt;
+}
 
 </style>

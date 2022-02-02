@@ -50,10 +50,6 @@ def calc_route(params, initial_state, speed):
 def softabs(x, scale=0.1):
     return jnp.sqrt(x**2 + scale**2)
 
-def loss_distance(distance):
-    min_distance = 0.2
-    return 0.1 * (distance ** 2) + jnp.exp(-(distance / min_distance) ** 2)
-
 
 def loss_func(route, target_pos, target_angle, target_speed, cfg: InterceptSettings):
     final_waypoint = route[-1]
@@ -118,11 +114,24 @@ def plot_routes(routes, losses, initial_target_pos, target_angle, target_speed, 
     axis.grid(alpha=0.5)
     axis.set_aspect('equal', adjustable='box')
 
-def route_to_list_of_dicts(route):
+def route_to_list_of_dicts(route, speed, target_pos, target_angle, target_speed):
     keys = ['x', 'y', 'angle', 't']
     output = [{k: float(v) for k, v in zip(keys, waypoint)} for waypoint in route]
-    for i, wp in enumerate(output[:-1]):
-        wp['angle'] = output[i+1]['angle']
+
+    for i, wp in enumerate(output):
+        if i < len(output) - 1:
+            wp['new_angle'] = output[i+1]['angle']
+        else:
+            wp['new_angle'] = wp['angle']
+        wp['duration'] = wp['t'] - route[0][3]
+        wp['target_x'] = target_pos[0] + np.cos(target_angle) * target_speed * wp['duration']
+        wp['target_y'] = target_pos[1] + np.sin(target_angle) * target_speed * wp['duration']
+        dx, dy = wp['target_x'] - wp['x'], wp['target_y'] - wp['y']
+        wp['target_dist'] = np.sqrt(dx**2 + dy**2)
+        rel_angle = np.arctan2(wp['target_y'] - wp['y'], wp['target_x'] - wp['x']) - wp['angle']
+        wp['target_bearing'] = rel_angle % (2 * np.pi)
+        wp['speed'] = speed
+        output[i] = {k: float(v) for k,v in wp.items()}
     return output
 
 
@@ -163,24 +172,10 @@ def calculate_intercept(initial_pos, initial_angle, initial_speed, target_pos, t
     ind_best = np.nanargmin(losses)
     route = routes[ind_best]
     loss = losses[ind_best]
-    # params = losses[ind_best]
-    duration = (route[-1, 3] - route[0, 3])
-    final_target_pos = target_pos + np.array([np.cos(target_angle), np.sin(target_angle)]) * target_speed * duration
-    final_distance = np.linalg.norm(final_target_pos - route[-1][:2])
-
-    e_target = np.array([np.cos(target_angle), np.sin(target_angle)])
-    delta_t = route[:,3] - route[0,3]
-    distances_to_target = np.linalg.norm(route[:,:2] - (target_pos + e_target * target_speed * delta_t[:, None]), axis=1)
-
-    route_list = route_to_list_of_dicts(route)
-    for wp, d in zip(route_list, distances_to_target):
-        wp['target_dist'] = float(d)
+    route_list = route_to_list_of_dicts(route, initial_speed, *target_params)
 
     return dict(route=route_list,
-                loss=float(loss),
-                duration=float(duration),
-                final_target_pos=dict(x=float(final_target_pos[0]), y=float(final_target_pos[1])),
-                final_distance=float(final_distance)), (routes, losses, all_losses)
+                loss=float(loss)), (routes, losses, all_losses)
 
 
 if __name__ == '__main__':

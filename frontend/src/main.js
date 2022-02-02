@@ -90,6 +90,13 @@ class Ship {
         this.tons = tons
         this.pos = pos
     }
+
+    is_warship(){
+        return this.ship_type == "Zerstörer"
+    }
+    is_unknown(){
+        return this.ship_type == "Unbekannt"
+    }
 }
 
 function increment_ship_id(state) {
@@ -201,8 +208,10 @@ const store = new Vuex.Store({
         },
         set_intercept(state, intercept) {
             state.intercept = intercept
+            const final_wp = intercept.route.at(-1)
+            state.intercept.final_uboot_pos = new Position(final_wp.x, final_wp.y, final_wp.heading, final_wp.speed)
             state.intercept.final_ship_positions = state.ships.map(s => {
-                return {pos: s.pos.get_moved_copy(intercept.duration), color: s.color}
+                return {pos: s.pos.get_moved_copy(final_wp.duration), color: s.color, name: s.name}
             })
             state.intercept.route.map(wp => {wp.timestamp = seconds_to_timestamp(wp.t)})
         }

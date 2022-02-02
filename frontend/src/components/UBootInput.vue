@@ -1,6 +1,6 @@
 <template>
   <div class="my-1">
-    <b-card title="U-Boot">
+    <b-card title="U-Boot" body-class="my-1 py-1">
       <form>
         <b-form-row>
           <b-col>

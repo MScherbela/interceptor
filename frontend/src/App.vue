@@ -2,7 +2,7 @@
   <div id="app" data="data" class="fill">
     <b-container fluid style="width: 95%" class="mt-2 mb-2">
       <b-row class="vh-100">
-        <b-col  xl="6" md="12" cols="12" class="flex-column d-flex">
+        <b-col xl="6" md="12" cols="12" class="flex-column d-flex">
           <b-row><b-col><h3>Angriffskarte</h3></b-col></b-row>
           <b-row class="flex-grow-1" style="min-height: 400px">
             <b-col>
@@ -55,6 +55,9 @@ export default {
     UBootInput,
     InterceptControl
   },
+  created() {
+    document.title = "U-Boot Rechner"
+  }
 
 }
 </script>

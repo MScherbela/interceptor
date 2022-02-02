@@ -20,6 +20,9 @@ def static_index():
 
 @app.route("/api", methods=['GET'])
 def api():
+    """
+    Input/output units: positions in sm, headings in deg from north, speeds in kn, times in seconds
+    """
     args = request.args
     intercept_params = dict(
         initial_pos=[float(args['x']), float(args['y'])],
@@ -40,10 +43,12 @@ def api():
                             fix_attack_side=(args.get('fix_attack_side', 'false') == 'true'))
 
     result,_ = calculate_intercept(**intercept_params, cfg=cfg)
-    result['duration'] *= 3600
     for wp in result['route']:
         wp['t'] *= 3600
+        wp['duration'] *= 3600
         wp['heading'] = angle_to_heading(wp['angle'])
+        wp['new_heading'] = angle_to_heading(wp['new_angle'])
+        wp['target_bearing'] = (-wp['target_bearing'] * 180 / PI) % 360
     print(result)
 
     return result

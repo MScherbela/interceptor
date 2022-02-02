@@ -34,6 +34,23 @@ export default {
         }
       })
     },
+    get_traces_to_intercepted_ships() {
+      return this.intercept.final_ship_positions.map(s => {
+        const rel_pos = this.intercept.final_uboot_pos.get_relative_position(s.pos)
+        return {
+          x: [this.intercept.final_uboot_pos.x, s.pos.x],
+          y: [this.intercept.final_uboot_pos.y, s.pos.y],
+          type: 'scatter',
+          name: s.name + ": " + rel_pos.distance.toFixed(1) + " sm, " + rel_pos.rel_direction.toFixed(0) + "°",
+          opacity: 0.6,
+          showlegend: true,
+          line: {
+            color: s.color,
+            dash: 'dash'
+          }
+        }
+      })
+    },
     get_intercept_trace() {
       const route = this.intercept.route
       return {
@@ -61,7 +78,7 @@ export default {
     get_uboot_shape() {
       return this.get_ship_shape(this.uboot_pos, 'black', 0.7, 0.6)
     },
-    adjust_plot_height(){
+    adjust_plot_height() {
       this.plot_height = this.$refs.shipmap_div.clientHeight - 50
     }
   },
@@ -70,7 +87,7 @@ export default {
       plot_height: 500
     }
   },
-  mounted(){
+  mounted() {
     window.addEventListener("resize", this.adjust_plot_height)
     this.adjust_plot_height()
   },
@@ -78,6 +95,7 @@ export default {
     plot_data() {
       let traces = this.get_ship_traces()
       if (this.intercept != null) {
+        traces = traces.concat(this.get_traces_to_intercepted_ships())
         traces.push(this.get_intercept_trace())
       }
       return traces
@@ -95,14 +113,16 @@ export default {
         yaxis: {
           // range: [-20, 20],
           dtick: 1,
-          zeroline: false
+          zeroline: false,
+          showticklabels: false
         },
         xaxis: {
           // range: [-20, 20],
           scaleanchor: 'y',
           scaleratio: 1,
           dtick: 1,
-          zeroline: false
+          zeroline: false,
+          showticklabels: false
         },
         legend: {
           x: 0.02,
