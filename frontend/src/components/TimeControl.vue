@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card>
+    <b-card class="cardbackground">
       <b-row>
         <b-col>
           <b-time v-model="time" show-seconds locale="de" style="width:100%"/>

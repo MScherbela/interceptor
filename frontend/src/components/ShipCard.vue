@@ -1,6 +1,6 @@
 <template>
   <div class="ship">
-    <div class="card" :class="{sunk: !ship.alive}">
+    <div class="card cardbackground" :class="{sunk: !ship.alive}">
       <b-card-header class="pt-2 pb-2" :style="{'background-color': ship.color, color: 'white'}">
         <b-row>
           <b-col class="my-auto">

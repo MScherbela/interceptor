@@ -1,5 +1,5 @@
 <template>
-  <b-card class="my-1">
+  <b-card class="my-1 cardbackground">
     <form v-on:submit.prevent="get_intercept_course">
       <b-form-row>
         <b-col>

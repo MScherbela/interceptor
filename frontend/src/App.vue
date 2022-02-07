@@ -1,9 +1,13 @@
 <template>
-  <div id="app" data="data" class="fill">
-    <b-container fluid style="width: 95%" class="mt-2 mb-2">
+  <div id="app" data="data" class="fill mt-0 mb-0">
+    <b-container fluid style="width: 95%" class="p-3 m-0">
       <b-row class="vh-100">
         <b-col xl="6" md="12" cols="12" class="flex-column d-flex">
-          <b-row><b-col><h3>Angriffskarte</h3></b-col></b-row>
+          <b-row class="mb-1">
+            <b-col>
+              <TitleCard title="Angriffskarte"/>
+            </b-col>
+          </b-row>
           <b-row class="flex-grow-1" style="min-height: 400px">
             <b-col>
               <ShipMap :ships="$store.state.ships" :uboot_pos="$store.state.uboot_pos" :intercept="$store.state.intercept"/>
@@ -11,7 +15,11 @@
           </b-row>
         </b-col>
         <b-col xl="3" md="6" cols="12">
-          <b-row><b-col><h3>Ziele</h3></b-col></b-row>
+          <b-row class="mb-1">
+            <b-col>
+              <TitleCard title="Ziele"/>
+            </b-col>
+          </b-row>
           <b-row>
             <b-col>
               <ShipList/>
@@ -19,17 +27,19 @@
           </b-row>
         </b-col>
         <b-col xl="3" md="6" cols="12">
-          <b-row>
-            <b-col><h3>Einstellungen</h3></b-col></b-row>
+          <b-row class="mb-1">
+            <b-col><TitleCard title="Einstellungen"/></b-col>
+          </b-row>
           <b-row>
             <b-col>
-              <TimeControl/>
-              <UBootInput/>
+              <TimeControl class="mb-2"/>
+              <UBootInput class="mb-2"/>
               <InterceptControl
                   :ships="$store.state.ships"
                   :uboot_pos="$store.state.uboot_pos"
                   :time="this.$store.state.time"
                   :intercept="$store.state.intercept"
+                  class="mb-2"
               />
             </b-col>
           </b-row>
@@ -45,6 +55,7 @@ import ShipMap from "./components/ShipMap";
 import UBootInput from "@/components/UBootInput";
 import TimeControl from "@/components/TimeControl";
 import InterceptControl from "@/components/InterceptControl";
+import TitleCard from "@/components/TitleCard";
 
 export default {
   name: 'App',
@@ -53,7 +64,8 @@ export default {
     ShipList,
     ShipMap,
     UBootInput,
-    InterceptControl
+    InterceptControl,
+    TitleCard
   },
   created() {
     document.title = "U-Boot Rechner"
@@ -67,6 +79,21 @@ export default {
   min-height: 100%;
   height: 100%;
 }
+
+#app{
+  background-image: url("../public/metal2.png");
+}
+
+html, body {
+  margin: 0;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.cardbackground {
+  background-image: url("../public/brushed_alu.png")
+}
+
 /*#app {*/
 /*  font-family: Avenir, Helvetica, Arial, sans-serif;*/
 /*  -webkit-font-smoothing: antialiased;*/

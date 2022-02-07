@@ -1,5 +1,5 @@
 <template>
-  <b-card style="height: 95%" ref="shipmap_div">
+  <b-card style="height: 95%" ref="shipmap_div" class="cardbackground">
     <Plotly :data="plot_data" :layout="plot_layout" :displayModeBar="false"/>
   </b-card>
 </template>
@@ -104,11 +104,25 @@ export default {
       return {
         height: this.plot_height,
         autosize: true,
+        images: [
+          {
+            source: "paper.jpg",
+            // source: "https://raw.githubusercontent.com/cldougl/plot_images/add_r_img/vox.png",
+            x: 0,
+            y: 1,
+            sizex: 1,
+            sizey: 1,
+            xref: "paper",
+            yref: "paper",
+            sizing: "fill",
+            layer: "below"
+          }
+        ],
         margin: {
-          t: 20,
-          b: 20,
-          l: 20,
-          r: 20
+          t: 0,
+          b: 0,
+          l: 0,
+          r: 0
         },
         yaxis: {
           // range: [-20, 20],

@@ -4,10 +4,10 @@
       <ShipCard
           :ship="ship"
           :id="ship.id"
-          class="mb-1 mt-1"
+          class="mt-0 mb-2"
       />
     </div>
-    <b-card>
+    <b-card class="cardbackground">
       <AddShipForm/>
     </b-card>
   </div>
