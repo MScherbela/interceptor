@@ -5,6 +5,7 @@ import '@/css/bootswatch_flatly.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import App from './App.vue'
 import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
+import './registerServiceWorker'
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)

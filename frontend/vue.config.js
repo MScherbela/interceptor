@@ -1,3 +1,9 @@
 module.exports = {
-  publicPath: './'
+  publicPath: './',
+  pwa: {
+    name: "U-Boot Rechner",
+    themeColor: "#000033"
+  }
 }
+
+
