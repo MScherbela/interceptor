@@ -1,6 +1,6 @@
 <template>
   <div id="app" data="data" class="mt-0 mb-0">
-    <b-container fluid style="width: 95%" class="p-3 m-0">
+    <b-container fluid style="width: 100%; min-height: 100vh" class="py-3 px-5">
       <b-row>
         <b-col xl="6" md="12" cols="12" class="flex-column d-flex">
           <b-row class="mb-1">
