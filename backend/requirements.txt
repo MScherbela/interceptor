@@ -1,6 +1,7 @@
 gunicorn
 flask
 flask-cors
+flask-compress
 numpy
 jax
 jaxlib

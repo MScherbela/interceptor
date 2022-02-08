@@ -1,9 +1,11 @@
 from flask import Flask, request, redirect
 from flask_cors import CORS
+from flask_compress import Compress
 from intercept_calculator import calculate_intercept, InterceptSettings
 
 app = Flask('app')
 CORS(app)
+Compress(app)
 PI = 3.14159265359
 
 def heading_to_angle(heading):
