@@ -7,7 +7,7 @@
           class="mt-0 mb-2"
       />
     </div>
-    <b-card class="cardbackground">
+    <b-card class="cardbackground" body-class="compactcardbody">
       <AddShipForm/>
     </b-card>
   </div>

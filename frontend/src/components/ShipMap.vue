@@ -141,7 +141,8 @@ export default {
         },
         legend: {
           x: 0.02,
-          y: 0.02
+          y: 0.02,
+          bgcolor: 'rgba(1.0, 1.0, 1.0, 0.7)'
         },
         shapes:
             this.ships.map(s => this.get_ship_shape(s.pos, s.color, 0.5, 0.7)

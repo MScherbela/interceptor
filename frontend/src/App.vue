@@ -76,33 +76,26 @@ export default {
 
 <style>
 
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
 #app{
-  /*min-height: 100%;*/
-  /*height: 100%;*/
-  /*height: 100vh;*/
   background-image: url("../public/metal2.png");
 }
 
-body {
-  margin: 0;
-  /*height: 100%;*/
-}
-
-html {
-  margin: 0;
-  /*height: 100%;*/
-}
-
 .cardbackground {
-  background-image: url("../public/brushed_alu.png")
+  background-image: url("../public/brushed_alu.png");
+
 }
 
-/*#app {*/
-/*  font-family: Avenir, Helvetica, Arial, sans-serif;*/
-/*  -webkit-font-smoothing: antialiased;*/
-/*  -moz-osx-font-smoothing: grayscale;*/
-/*  text-align: center;*/
-/*  color: #2c3e50;*/
-/*  margin-top: 60px;*/
-/*}*/
+.compactcardbody {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.frakturfont {
+    font-family: UnifrakturCook;
+}
+
+
+
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <b-card class="my-1 cardbackground">
+  <b-card class="my-1 cardbackground" body-class="compactcardbody">
     <form v-on:submit.prevent="get_intercept_course">
       <b-form-row>
         <b-col>
@@ -41,7 +41,7 @@
           <b-form-checkbox v-model="fix_initial_angle" name="check-button" switch class="my-1">1. Kurs fix</b-form-checkbox>
         </b-col>
         <b-col class="col-md-auto">
-          <b-button type="submit" variant="danger">Abfangen</b-button>
+          <b-button type="submit" variant="primary">Berechnen</b-button>
         </b-col>
       </b-form-row>
     </form>

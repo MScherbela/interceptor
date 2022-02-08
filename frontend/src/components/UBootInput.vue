@@ -1,6 +1,9 @@
 <template>
   <div class="my-1">
-    <b-card title="U-Boot" body-class="cardbackground">
+    <b-card class="cardbackground" body-class="compactcardbody">
+      <b-card-title class="my-1">
+        <h4 class="frakturfont">U-Boot Kurs</h4>
+      </b-card-title>
       <form>
         <b-form-row>
           <b-col>

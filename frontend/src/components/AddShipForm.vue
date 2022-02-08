@@ -45,7 +45,7 @@
 
       <b-form-row>
         <b-col>
-        <b-button type="submit" variant="primary">Add Ship</b-button>
+        <b-button type="submit" variant="primary">Ziel erfassen</b-button>
           </b-col>
       </b-form-row>
     </b-form>
