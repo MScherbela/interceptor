@@ -18,6 +18,7 @@ def angle_to_heading(angle):
 
 @app.route("/")
 @app.route("/static")
+@app.route("/static/")
 def static_index():
     return redirect('static/index.html')
 
