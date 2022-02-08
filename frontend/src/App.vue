@@ -46,6 +46,17 @@
         </b-col>
       </b-row>
     </b-container>
+    <b-container fluid class="footer px-5">
+      <b-row>
+        <b-col>
+                  <small>
+
+          <a href="https://github.com/MScherbela/interceptor" style="color: white">Copyright Ⓒ 2022 Michael Scherbela, source code on github  <b-icon-github/></a>
+                    </small>
+
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -94,6 +105,11 @@ export default {
 
 .frakturfont {
     font-family: UnifrakturCook;
+}
+
+.footer {
+  background-color: rgb(20, 20, 20);
+  color: white;
 }
 
 
