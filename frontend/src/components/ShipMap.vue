@@ -1,7 +1,7 @@
 <template>
-  <b-card style="height: 95%" ref="shipmap_div" class="cardbackground">
-    <Plotly :data="plot_data" :layout="plot_layout" :displayModeBar="false"/>
-  </b-card>
+<!--/*  <b-card style="height: 95%" ref="shipmap_div" class="cardbackground mapcard">*/-->
+    <Plotly :data="plot_data" :layout="plot_layout" :displayModeBar="false" class="mb-3"/>
+<!--  </b-card>-->
 </template>
 
 
@@ -79,7 +79,8 @@ export default {
       return this.get_ship_shape(this.uboot_pos, 'black', 0.7, 0.6)
     },
     adjust_plot_height() {
-      this.plot_height = this.$refs.shipmap_div.clientHeight - 50
+      // this.plot_height = this.$refs.shipmap_div.clientHeight - 50
+      this.plot_height = window.innerHeight * 0.85
     }
   },
   data() {
@@ -153,5 +154,10 @@ export default {
 </script>
 
 <style scoped>
+
+.mapcard {
+  /*height: max-content;*/
+  overflow: hidden;
+}
 
 </style>

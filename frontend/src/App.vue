@@ -1,7 +1,7 @@
 <template>
-  <div id="app" data="data" class="fill mt-0 mb-0">
+  <div id="app" data="data" class="mt-0 mb-0">
     <b-container fluid style="width: 95%" class="p-3 m-0">
-      <b-row class="vh-100">
+      <b-row>
         <b-col xl="6" md="12" cols="12" class="flex-column d-flex">
           <b-row class="mb-1">
             <b-col>
@@ -75,19 +75,22 @@ export default {
 </script>
 
 <style>
-.fill {
-  min-height: 100%;
-  height: 100%;
-}
 
 #app{
+  /*min-height: 100%;*/
+  /*height: 100%;*/
+  /*height: 100vh;*/
   background-image: url("../public/metal2.png");
 }
 
-html, body {
+body {
   margin: 0;
-  height: 100vh;
-  min-height: 100vh;
+  /*height: 100%;*/
+}
+
+html {
+  margin: 0;
+  /*height: 100%;*/
 }
 
 .cardbackground {
